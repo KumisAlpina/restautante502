@@ -1,0 +1,21 @@
+{# gestion/templates/gestion/login.html #}
+{% extends "gestion/base.html" %}
+
+{% block content %}
+<div class="login-wrap">
+    <h2>Iniciar sesión</h2>
+    {% if messages %}
+    <div class="login-messages">
+        {% for message in messages %}
+        <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <form class="login-form" method="post" action="">
+        {% csrf_token %}
+        {{ form.as_p }}
+        {{ form.errors }}
+        <p><button type="submit" class="btn-ingresar">Ingresar</button></p>
+    </form>
+</div>
+{% endblock %}

@@ -1,3 +1,4 @@
+{# gestion/templates/gestion/base.html #}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -26,6 +27,68 @@
             margin: 0 12px;
             text-decoration: none;
             font-weight: bold;
+        }
+        nav span {
+            color: white;
+            font-weight: bold;
+            margin-right: 12px;
+        }
+        .login-wrap {
+            max-width: 420px;
+            margin: 0 auto;
+            background: #fafafa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+        }
+        .login-wrap h2 {
+            color: #8B0000;
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #b22222;
+        }
+        .login-messages p {
+            color: #8B0000;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .login-form p {
+            margin: 14px 0;
+        }
+        .login-form label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #333;
+        }
+        .login-form input[type="text"],
+        .login-form input[type="password"] {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        .login-form .errorlist {
+            color: #8B0000;
+            list-style: none;
+            padding-left: 0;
+            margin: 6px 0 0 0;
+        }
+        .login-form .btn-ingresar {
+            background-color: #8B0000;
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .login-form .btn-ingresar:hover {
+            background-color: #a40000;
         }
         .contenedor {
             width: 90%;
@@ -67,6 +130,10 @@
     </header>
 
     <nav>
+        {% if request.user.is_authenticated %}
+        <span>{{ request.user.username }}</span>
+        <a href="{% url 'logout' %}">Cerrar sesión</a>
+        {% endif %}
         <a href="/">Inicio</a>
         <a href="/clientes/">Clientes</a>
         <a href="/empleados/">Empleados</a>
