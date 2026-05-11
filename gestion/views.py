@@ -4,12 +4,12 @@ from django.shortcuts import render
 from .models import Cliente, Empleado, Mesa, Plato, Orden, Factura
 def inicio(request):
     context = {
-        'total_clientes': Cliente.objects.all(),
-        'total_empleados': Empleado.objects.all(),
-        'total_mesas': Mesa.objects.all(),
-        'total_platos': Plato.objects.all(),
-        'total_ordenes': Orden.objects.all(),
-        'total_facturas': Factura.objects.all(),
+        'total_clientes': Cliente.objects.count(),
+        'total_empleados': Empleado.objects.count(),
+        'total_mesas': Mesa.objects.count(),
+        'total_platos': Plato.objects.count(),
+        'total_ordenes': Orden.objects.count(),
+        'total_facturas': Factura.objects.count(),
     }
     return render(request, 'gestion/inicio.html', context)
 
