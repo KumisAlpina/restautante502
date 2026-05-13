@@ -1,35 +1,49 @@
 {% extends 'gestion/base.html' %}
 
 {% block content %}
-<h2>Panel principal</h2>
+<h1 class="page-title">Panel principal</h1>
 
-<div class="card">
-    <h3>Clientes</h3>
-    <p>{{ total_clientes }}</p>
-</div>
+<div class="dash-grid">
+    <article class="dash-card">
+        <h2 class="dash-card__title">Clientes</h2>
+        <p class="dash-card__value">{{ total_clientes }}</p>
+        <p class="dash-card__label">Registrados</p>
+        <a class="btn btn--primary btn--block" href="{% url 'cliente_lista' %}">Gestionar</a>
+    </article>
 
-<div class="card">
-    <h3>Empleados</h3>
-    <p>{{ total_empleados }}</p>
-</div>
+    <article class="dash-card">
+        <h2 class="dash-card__title">Empleados</h2>
+        <p class="dash-card__value">{{ total_empleados }}</p>
+        <p class="dash-card__label">Registrados</p>
+        <a class="btn btn--primary btn--block" href="{% url 'empleado_lista' %}">Gestionar</a>
+    </article>
 
-<div class="card">
-    <h3>Mesas</h3>
-    <p>{{ total_mesas }}</p>
-</div>
+    <article class="dash-card">
+        <h2 class="dash-card__title">Mesas</h2>
+        <p class="dash-card__value">{{ total_mesas }}</p>
+        <p class="dash-card__label">Registradas</p>
+        <a class="btn btn--primary btn--block" href="{% url 'mesa_lista' %}">Gestionar</a>
+    </article>
 
-<div class="card">
-    <h3>Platos</h3>
-    <p>{{ total_platos }}</p>
-</div>
+    <article class="dash-card">
+        <h2 class="dash-card__title">Platos</h2>
+        <p class="dash-card__value">{{ total_platos }}</p>
+        <p class="dash-card__label">En carta</p>
+        <a class="btn btn--primary btn--block" href="{% url 'plato_lista' %}">Gestionar</a>
+    </article>
 
-<div class="card">
-    <h3>Órdenes</h3>
-    <p>{{ total_ordenes }}</p>
-</div>
+    <article class="dash-card">
+        <h2 class="dash-card__title">Órdenes</h2>
+        <p class="dash-card__value">{{ total_ordenes }}</p>
+        <p class="dash-card__label">Totales</p>
+        <a class="btn btn--primary btn--block" href="{% url 'orden_lista' %}">Gestionar</a>
+    </article>
 
-<div class="card">
-    <h3>Facturas</h3>
-    <p>{{ total_facturas }}</p>
+    <article class="dash-card">
+        <h2 class="dash-card__title">Facturas</h2>
+        <p class="dash-card__value">{{ total_facturas }}</p>
+        <p class="dash-card__label">Emitidas</p>
+        <a class="btn btn--primary btn--block" href="{% url 'factura_lista' %}">Gestionar</a>
+    </article>
 </div>
 {% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'gestion/base.html' %}
+
+{% block content %}
+<h1 class="page-title">Eliminar empleado</h1>
+<p class="confirm-text">¿Confirma que desea eliminar al empleado <strong>{{ empleado.nombre }}</strong>?</p>
+<form method="post">
+    {% csrf_token %}
+    <div class="form-actions">
+        <button type="submit" class="btn btn--primary">Sí, eliminar</button>
+        <a class="btn btn--outline" href="{% url 'empleado_lista' %}">Cancelar</a>
+    </div>
+</form>
+{% endblock %}

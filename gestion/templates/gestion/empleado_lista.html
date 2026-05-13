@@ -1,0 +1,41 @@
+{% extends 'gestion/base.html' %}
+
+{% block content %}
+<h1 class="page-title">Empleados</h1>
+<div class="page-toolbar">
+    <a class="btn btn--primary" href="{% url 'empleado_crear' %}">+ Crear empleado</a>
+</div>
+<div class="table-wrapper">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Cargo</th>
+                <th>Teléfono</th>
+                <th>Correo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for empleado in empleados %}
+            <tr>
+                <td>{{ empleado.id }}</td>
+                <td>{{ empleado.nombre }}</td>
+                <td>{{ empleado.cargo }}</td>
+                <td>{{ empleado.telefono|default:"—" }}</td>
+                <td>{{ empleado.correo|default:"—" }}</td>
+                <td class="data-table__actions">
+                    <a class="btn btn--outline btn--sm" href="{% url 'empleado_editar' empleado.pk %}">Editar</a>
+                    <a class="btn btn--outline btn--sm" href="{% url 'empleado_eliminar' empleado.pk %}">Eliminar</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">No hay empleados registrados.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

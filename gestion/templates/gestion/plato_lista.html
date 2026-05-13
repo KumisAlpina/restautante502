@@ -1,0 +1,43 @@
+{% extends 'gestion/base.html' %}
+
+{% block content %}
+<h1 class="page-title">Platos</h1>
+<div class="page-toolbar">
+    <a class="btn btn--primary" href="{% url 'plato_crear' %}">+ Crear plato</a>
+</div>
+<div class="table-wrapper">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Precio</th>
+                <th>Categoría</th>
+                <th>Disponible</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for plato in platos %}
+            <tr>
+                <td>{{ plato.id }}</td>
+                <td>{{ plato.nombre_plato }}</td>
+                <td>{{ plato.descripcion|default:"—" }}</td>
+                <td>{{ plato.precio }}</td>
+                <td>{{ plato.categoria|default:"—" }}</td>
+                <td>{% if plato.disponible %}Sí{% else %}No{% endif %}</td>
+                <td class="data-table__actions">
+                    <a class="btn btn--outline btn--sm" href="{% url 'plato_editar' plato.pk %}">Editar</a>
+                    <a class="btn btn--outline btn--sm" href="{% url 'plato_eliminar' plato.pk %}">Eliminar</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7">No hay platos registrados.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

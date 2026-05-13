@@ -1,0 +1,45 @@
+{% extends 'gestion/base.html' %}
+
+{% block content %}
+<h1 class="page-title">Facturas</h1>
+<div class="page-toolbar">
+    <a class="btn btn--primary" href="{% url 'factura_crear' %}">+ Crear factura</a>
+</div>
+<div class="table-wrapper">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Orden</th>
+                <th>Fecha</th>
+                <th>Subtotal</th>
+                <th>Impuesto</th>
+                <th>Total</th>
+                <th>Método de pago</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for factura in facturas %}
+            <tr>
+                <td>{{ factura.id }}</td>
+                <td>{{ factura.orden.id }}</td>
+                <td>{{ factura.fecha_factura }}</td>
+                <td>{{ factura.subtotal }}</td>
+                <td>{{ factura.impuesto }}</td>
+                <td>{{ factura.total_factura }}</td>
+                <td>{{ factura.metodo_pago }}</td>
+                <td class="data-table__actions">
+                    <a class="btn btn--outline btn--sm" href="{% url 'factura_editar' factura.pk %}">Editar</a>
+                    <a class="btn btn--outline btn--sm" href="{% url 'factura_eliminar' factura.pk %}">Eliminar</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8">No hay facturas registradas.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

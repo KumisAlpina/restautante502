@@ -1,0 +1,39 @@
+{% extends 'gestion/base.html' %}
+
+{% block content %}
+<h1 class="page-title">Mesas</h1>
+<div class="page-toolbar">
+    <a class="btn btn--primary" href="{% url 'mesa_crear' %}">+ Crear mesa</a>
+</div>
+<div class="table-wrapper">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Número</th>
+                <th>Capacidad</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mesa in mesas %}
+            <tr>
+                <td>{{ mesa.id }}</td>
+                <td>{{ mesa.numero_mesa }}</td>
+                <td>{{ mesa.capacidad }}</td>
+                <td>{{ mesa.estado_mesa }}</td>
+                <td class="data-table__actions">
+                    <a class="btn btn--outline btn--sm" href="{% url 'mesa_editar' mesa.pk %}">Editar</a>
+                    <a class="btn btn--outline btn--sm" href="{% url 'mesa_eliminar' mesa.pk %}">Eliminar</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">No hay mesas registradas.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

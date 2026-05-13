@@ -1,0 +1,428 @@
+/* --- Variables (referencia visual Pasta La Vista) --- */
+:root {
+    --color-brown: #4b2c20;
+    --color-red: #92140c;
+    --color-red-hover: #a81810;
+    --color-red-dark: #800000;
+    --color-cream: #fff9f0;
+    --color-gold: #c5a059;
+    --color-gold-line: rgba(197, 160, 89, 0.45);
+    --color-text: #333333;
+    --color-border: #e0dcd6;
+    --font-serif: Georgia, "Times New Roman", Times, serif;
+    --font-sans: Arial, Helvetica, sans-serif;
+    --shadow-panel: 0 4px 14px rgba(0, 0, 0, 0.1);
+    --shadow-card: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+/* --- Base --- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    color: var(--color-text);
+    background-color: var(--color-cream);
+}
+
+/* --- Cabecera (marrón con rayas diagonales) --- */
+.site-header {
+    background-color: var(--color-brown);
+    background-image: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 5px,
+        rgba(0, 0, 0, 0.14) 5px,
+        rgba(0, 0, 0, 0.14) 10px
+    );
+    padding: 1rem 1.25rem;
+    text-align: center;
+}
+
+.site-header__title {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-serif);
+    font-weight: normal;
+    font-size: clamp(1rem, 2.5vw, 1.35rem);
+    color: #ffffff;
+    letter-spacing: 0.02em;
+    line-height: 1.35;
+}
+
+.site-header__title em {
+    font-style: italic;
+}
+
+/* --- Navegación --- */
+.site-nav {
+    background-color: var(--color-red);
+    padding: 0.55rem 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0.15rem 0.35rem;
+}
+
+.site-nav .nav-link {
+    position: relative;
+    display: inline-block;
+    font-family: var(--font-sans);
+    color: #ffffff;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 0.45rem 0.55rem;
+    border-radius: 2px;
+}
+
+.site-nav .nav-link:hover {
+    color: #fff9e6;
+}
+
+.site-nav .nav-link--active::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 4px;
+    width: 65%;
+    height: 2px;
+    background: var(--color-gold);
+    border-radius: 1px;
+}
+
+.site-nav__meta {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.92);
+    font-weight: 600;
+    padding: 0 0.35rem;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.site-nav__meta a {
+    color: #fff;
+    text-decoration: underline;
+    text-transform: none;
+    font-weight: 600;
+    margin-left: 0.25rem;
+}
+
+.site-nav__meta a:hover {
+    color: #fff9e6;
+}
+
+/* --- Contenedor principal (tarjeta blanca) --- */
+.site-main .contenedor {
+    max-width: 1100px;
+    width: 92%;
+    margin: 2rem auto;
+    padding: 2rem 2.25rem;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: var(--shadow-panel);
+}
+
+/* --- Títulos de sección --- */
+.page-title {
+    font-family: var(--font-serif);
+    color: var(--color-red-dark);
+    font-size: 1.75rem;
+    font-weight: normal;
+    margin: 0 0 1.25rem 0;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--color-gold-line);
+}
+
+.page-toolbar {
+    margin-bottom: 1rem;
+}
+
+/* --- Botones --- */
+.btn {
+    display: inline-block;
+    font-family: var(--font-sans);
+    cursor: pointer;
+    text-decoration: none;
+    border-radius: 5px;
+    border: 2px solid transparent;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.25;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.btn--primary {
+    background: var(--color-red);
+    color: #ffffff !important;
+    border-color: var(--color-red);
+    padding: 0.5rem 1.1rem;
+}
+
+.btn--primary:hover {
+    background: var(--color-red-hover);
+    border-color: var(--color-red-hover);
+    color: #ffffff !important;
+}
+
+.btn--outline {
+    background: #ffffff;
+    color: var(--color-red) !important;
+    border: 1px solid var(--color-red);
+    padding: 0.32rem 0.6rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.btn--outline:hover {
+    background: rgba(146, 20, 12, 0.06);
+    color: var(--color-red-dark) !important;
+}
+
+.btn--block {
+    display: block;
+    width: 100%;
+}
+
+.btn--sm {
+    padding: 0.28rem 0.5rem;
+    font-size: 0.68rem;
+}
+
+.nav-link:focus-visible,
+.btn:focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+}
+
+.form-actions {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    align-items: center;
+}
+
+/* --- Panel / dashboard --- */
+.dash-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+    gap: 1.25rem;
+}
+
+.dash-card {
+    position: relative;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: var(--shadow-card);
+    padding: 1.35rem 1rem 1.5rem;
+    text-align: center;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.dash-card::before {
+    content: "";
+    display: block;
+    height: 4px;
+    margin: -1.35rem -1rem 1rem -1rem;
+    background: linear-gradient(90deg, var(--color-red-dark) 0%, var(--color-gold) 100%);
+}
+
+.dash-card__title {
+    font-family: var(--font-serif);
+    color: var(--color-red-dark);
+    font-size: 1.05rem;
+    font-weight: normal;
+    margin: 0 0 0.5rem 0;
+}
+
+.dash-card__value {
+    font-family: var(--font-serif);
+    color: var(--color-red-dark);
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.1;
+    margin: 0.25rem 0;
+}
+
+.dash-card__label {
+    margin: 0 0 0.85rem 0;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-red-dark);
+}
+
+/* --- Tablas CRUD --- */
+.table-wrapper {
+    margin-top: 0.25rem;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+    font-size: 0.88rem;
+}
+
+.data-table thead th {
+    background-color: var(--color-brown);
+    color: #ffffff;
+    text-transform: uppercase;
+    font-size: 0.68rem;
+    letter-spacing: 0.07em;
+    font-weight: 700;
+    padding: 0.78rem 0.55rem;
+    text-align: left;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.data-table tbody td {
+    padding: 0.72rem 0.55rem;
+    background: #ffffff;
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    vertical-align: middle;
+}
+
+.data-table tbody tr:nth-child(even) td {
+    background: #fffdf9;
+}
+
+.data-table__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    align-items: center;
+}
+
+/* --- Formularios (tabla de campos) --- */
+.form-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.form-table th,
+.form-table td {
+    padding: 0.65rem 0.85rem;
+    border: 1px solid var(--color-border);
+    text-align: left;
+    vertical-align: top;
+}
+
+.form-table th {
+    width: 28%;
+    background: #f5ebe0;
+    color: var(--color-brown);
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+.form-table td {
+    background: #ffffff;
+}
+
+.form-table input[type="text"],
+.form-table input[type="password"],
+.form-table input[type="number"],
+.form-table input[type="email"],
+.form-table select,
+.form-table textarea {
+    max-width: 100%;
+    padding: 0.45rem 0.55rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+}
+
+.errores {
+    color: var(--color-red);
+    margin: 4px 0 0 0;
+    padding-left: 18px;
+    font-size: 0.82rem;
+}
+
+.layout-login .contenedor {
+    background: transparent;
+    box-shadow: none;
+    padding: 2.5rem 1rem 3rem;
+}
+
+/* --- Login --- */
+.login-wrap {
+    max-width: 420px;
+    margin: 0 auto;
+    background: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    padding: 2rem 1.75rem;
+    box-shadow: var(--shadow-panel);
+}
+
+.login-wrap .page-title {
+    border-bottom-color: var(--color-gold-line);
+    font-size: 1.5rem;
+}
+
+.login-messages p {
+    color: var(--color-red);
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.login-form p {
+    margin: 14px 0;
+}
+
+.login-form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 6px;
+    color: #333;
+}
+
+.login-form input[type="text"],
+.login-form input[type="password"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.login-form .errorlist {
+    color: var(--color-red);
+    list-style: none;
+    padding-left: 0;
+    margin: 6px 0 0 0;
+}
+
+/* --- Texto de confirmación --- */
+.confirm-text {
+    margin: 0 0 1.25rem 0;
+    line-height: 1.5;
+    font-size: 0.95rem;
+}
