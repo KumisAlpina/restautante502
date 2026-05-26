@@ -1,42 +1,52 @@
 {% extends 'gestion/base.html' %}
 
 {% block content %}
-<h1 class="page-title">Facturas</h1>
+<h1 class="page-title">Facturas{% if rol_cajero and not rol_admin %} — Historial de ventas{% endif %}</h1>
+{% if puede_crear_factura %}
 <div class="page-toolbar">
     <a class="btn btn--primary" href="{% url 'factura_crear' %}">+ Crear factura</a>
 </div>
+{% endif %}
 <div class="table-wrapper">
     <table class="data-table">
         <thead>
             <tr>
                 <th>ID</th>
                 <th>Orden</th>
+                <th>Platos</th>
                 <th>Fecha</th>
                 <th>Subtotal</th>
                 <th>Impuesto</th>
                 <th>Total</th>
                 <th>Método de pago</th>
-                <th>Acciones</th>
+                {% if puede_editar_factura or puede_eliminar_factura %}<th>Acciones</th>{% endif %}
             </tr>
         </thead>
         <tbody>
             {% for factura in facturas %}
             <tr>
                 <td>{{ factura.id }}</td>
-                <td>{{ factura.orden.id }}</td>
+                <td>#{{ factura.orden.id }} · Mesa {{ factura.orden.mesa.numero_mesa }}</td>
+                <td class="cell-platos">{{ factura.orden.resumen_platos }}</td>
                 <td>{{ factura.fecha_factura }}</td>
-                <td>{{ factura.subtotal }}</td>
-                <td>{{ factura.impuesto }}</td>
-                <td>{{ factura.total_factura }}</td>
+                <td>${{ factura.subtotal }}</td>
+                <td>${{ factura.impuesto }}</td>
+                <td>${{ factura.total_factura }}</td>
                 <td>{{ factura.metodo_pago }}</td>
+                {% if puede_editar_factura or puede_eliminar_factura %}
                 <td class="data-table__actions">
+                    {% if puede_editar_factura %}
                     <a class="btn btn--outline btn--sm" href="{% url 'factura_editar' factura.pk %}">Editar</a>
+                    {% endif %}
+                    {% if puede_eliminar_factura %}
                     <a class="btn btn--outline btn--sm" href="{% url 'factura_eliminar' factura.pk %}">Eliminar</a>
+                    {% endif %}
                 </td>
+                {% endif %}
             </tr>
             {% empty %}
             <tr>
-                <td colspan="8">No hay facturas registradas.</td>
+                <td colspan="{% if puede_editar_factura or puede_eliminar_factura %}9{% else %}8{% endif %}">No hay facturas registradas.</td>
             </tr>
             {% endfor %}
         </tbody>

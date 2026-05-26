@@ -63,6 +63,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'gestion.context_processors.permisos_nav',
             ],
         },
     },
@@ -80,10 +81,10 @@ DATABASES = {
         'NAME': 'restaurante_502',
         'USER': 'sa',
         'PASSWORD': '12345#qwert',
-        'HOST': r'localhost\SQLEXPRESS',
+        'HOST': 'localhost',
         'PORT': '1433',
         'OPTIONS': {
-            'driver': 'ODBC Driver 18 for SQL Server',
+            'driver': 'ODBC Driver 17 for SQL Server',
             'extra_params' : 'TrustServerCertificate=yes;',
         },
     }

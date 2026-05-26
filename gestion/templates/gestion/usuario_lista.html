@@ -1,0 +1,43 @@
+{% extends 'gestion/base.html' %}
+
+{% block content %}
+<h1 class="page-title">Usuarios</h1>
+<div class="page-toolbar">
+    <a class="btn btn--primary" href="{% url 'usuario_crear' %}">+ Crear usuario</a>
+</div>
+<div class="table-wrapper">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Usuario</th>
+                <th>Correo</th>
+                <th>Grupo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for usuario in usuarios %}
+            <tr>
+                <td>{{ usuario.id }}</td>
+                <td>{{ usuario.username }}</td>
+                <td>{{ usuario.email|default:"—" }}</td>
+                <td>
+                    {% with grupo=usuario.groups.first %}
+                        {{ grupo.name|default:"—" }}
+                    {% endwith %}
+                </td>
+                <td class="data-table__actions">
+                    <a class="btn btn--outline btn--sm" href="{% url 'usuario_editar' usuario.pk %}">Editar</a>
+                    <a class="btn btn--outline btn--sm" href="{% url 'usuario_eliminar' usuario.pk %}">Eliminar</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">No hay usuarios registrados.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

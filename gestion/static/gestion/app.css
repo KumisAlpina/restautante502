@@ -426,3 +426,67 @@ body {
     line-height: 1.5;
     font-size: 0.95rem;
 }
+
+/* --- Secciones de formulario (orden / factura) --- */
+.form-section {
+    margin-bottom: 1.75rem;
+    padding: 1.25rem;
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    box-shadow: var(--shadow-card);
+}
+
+.form-section__title {
+    margin: 0 0 1rem 0;
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    font-weight: normal;
+    color: var(--color-brown);
+}
+
+.help {
+    margin: 0.5rem 0 0;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.orden-total-preview {
+    margin-top: 0.75rem;
+    font-size: 1rem;
+    color: var(--color-brown);
+}
+
+.cell-platos {
+    max-width: 220px;
+    font-size: 0.88rem;
+    line-height: 1.35;
+}
+
+.data-table tfoot th,
+.data-table tfoot td {
+    background: var(--color-cream);
+    font-weight: bold;
+}
+
+.messages {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem 0;
+}
+
+.message {
+    padding: 0.65rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.message--success {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.message--error {
+    background: #ffebee;
+    color: #c62828;
+}

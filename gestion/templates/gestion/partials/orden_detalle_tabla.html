@@ -1,0 +1,33 @@
+{% if orden.detalles.all %}
+<p class="help">Mesa {{ orden.mesa.numero_mesa }} · Cliente: {{ orden.cliente.nombre }}</p>
+<div class="table-wrapper">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Plato</th>
+                <th>Cant.</th>
+                <th>P. unitario</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for detalle in orden.detalles.all %}
+            <tr>
+                <td>{{ detalle.plato.nombre_plato }}</td>
+                <td>{{ detalle.cantidad }}</td>
+                <td>Q{{ detalle.precio_unitario }}</td>
+                <td>Q{{ detalle.subtotal }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="3">Subtotal orden</th>
+                <th>Q{{ orden.total }}</th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+{% else %}
+<p class="help">La orden no tiene platos registrados.</p>
+{% endif %}

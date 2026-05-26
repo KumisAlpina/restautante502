@@ -2,28 +2,80 @@
 
 {% block content %}
 <h1 class="page-title">{{ titulo }}</h1>
-<form method="post" novalidate>
+<form method="post" novalidate class="form-orden">
     {% csrf_token %}
     {% if form.non_field_errors %}
         <ul class="errores">
             {% for err in form.non_field_errors %}<li>{{ err }}</li>{% endfor %}
         </ul>
     {% endif %}
-    <table class="form-table">
-        {% for field in form %}
-        <tr>
-            <th>{{ field.label_tag }}</th>
-            <td>
-                {{ field }}
-                {% if field.errors %}
-                    <ul class="errores">{% for err in field.errors %}<li>{{ err }}</li>{% endfor %}</ul>
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
+    {% if formset.non_form_errors %}
+        <ul class="errores">
+            {% for err in formset.non_form_errors %}<li>{{ err }}</li>{% endfor %}
+        </ul>
+    {% endif %}
+
+    <section class="form-section">
+        <h2 class="form-section__title">Datos de la orden</h2>
+        <table class="form-table">
+            {% for field in form %}
+            <tr>
+                <th>{{ field.label_tag }}</th>
+                <td>
+                    {{ field }}
+                    {% if field.errors %}
+                        <ul class="errores">{% for err in field.errors %}<li>{{ err }}</li>{% endfor %}</ul>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </section>
+
+    <section class="form-section">
+        <h2 class="form-section__title">Platos del pedido</h2>
+        {{ formset.management_form }}
+        <div class="table-wrapper">
+            <table class="data-table data-table--formset">
+                <thead>
+                    <tr>
+                        <th>Plato</th>
+                        <th>Cantidad</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for detalle_form in formset %}
+                    <tr class="formset-row">
+                        {% for hidden in detalle_form.hidden_fields %}{{ hidden }}{% endfor %}
+                        <td>
+                            {{ detalle_form.plato }}
+                            {% if detalle_form.plato.errors %}
+                                <ul class="errores">{% for err in detalle_form.plato.errors %}<li>{{ err }}</li>{% endfor %}</ul>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ detalle_form.cantidad }}
+                            {% if detalle_form.cantidad.errors %}
+                                <ul class="errores">{% for err in detalle_form.cantidad.errors %}<li>{{ err }}</li>{% endfor %}</ul>
+                            {% endif %}
+                        </td>
+                        <td class="data-table__actions">
+                            {% if detalle_form.DELETE %}{{ detalle_form.DELETE }}{% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <p class="help">El total se calcula automáticamente según el precio de cada plato.</p>
+        {% if total_orden is not None %}
+        <p class="orden-total-preview"><strong>Total actual:</strong> Q{{ total_orden }}</p>
+        {% endif %}
+    </section>
+
     <div class="form-actions">
-        <button type="submit" class="btn btn--primary">Guardar</button>
+        <button type="submit" class="btn btn--primary">Guardar orden</button>
         <a class="btn btn--outline" href="{% url 'orden_lista' %}">Cancelar</a>
     </div>
 </form>

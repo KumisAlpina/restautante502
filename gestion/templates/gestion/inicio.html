@@ -4,46 +4,58 @@
 <h1 class="page-title">Panel principal</h1>
 
 <div class="dash-grid">
+    {% if dash_clientes %}
     <article class="dash-card">
         <h2 class="dash-card__title">Clientes</h2>
         <p class="dash-card__value">{{ total_clientes }}</p>
         <p class="dash-card__label">Registrados</p>
-        <a class="btn btn--primary btn--block" href="{% url 'cliente_lista' %}">Gestionar</a>
+        <a class="btn btn--primary btn--block" href="{% url 'cliente_lista' %}">{% if rol_mesero and not rol_admin %}Consultar{% else %}Gestionar{% endif %}</a>
     </article>
+    {% endif %}
 
+    {% if dash_empleados %}
     <article class="dash-card">
         <h2 class="dash-card__title">Empleados</h2>
         <p class="dash-card__value">{{ total_empleados }}</p>
         <p class="dash-card__label">Registrados</p>
         <a class="btn btn--primary btn--block" href="{% url 'empleado_lista' %}">Gestionar</a>
     </article>
+    {% endif %}
 
+    {% if dash_mesas %}
     <article class="dash-card">
         <h2 class="dash-card__title">Mesas</h2>
         <p class="dash-card__value">{{ total_mesas }}</p>
         <p class="dash-card__label">Registradas</p>
-        <a class="btn btn--primary btn--block" href="{% url 'mesa_lista' %}">Gestionar</a>
+        <a class="btn btn--primary btn--block" href="{% url 'mesa_lista' %}">Consultar</a>
     </article>
+    {% endif %}
 
+    {% if dash_platos %}
     <article class="dash-card">
-        <h2 class="dash-card__title">Platos</h2>
+        <h2 class="dash-card__title">{% if rol_mesero and not rol_admin %}Menú{% else %}Platos{% endif %}</h2>
         <p class="dash-card__value">{{ total_platos }}</p>
-        <p class="dash-card__label">En carta</p>
-        <a class="btn btn--primary btn--block" href="{% url 'plato_lista' %}">Gestionar</a>
+        <p class="dash-card__label">{% if rol_mesero and not rol_admin %}Disponibles{% else %}En carta{% endif %}</p>
+        <a class="btn btn--primary btn--block" href="{% url 'plato_lista' %}">{% if rol_mesero and not rol_admin %}Ver menú{% else %}Gestionar{% endif %}</a>
     </article>
+    {% endif %}
 
+    {% if dash_ordenes %}
     <article class="dash-card">
         <h2 class="dash-card__title">Órdenes</h2>
         <p class="dash-card__value">{{ total_ordenes }}</p>
-        <p class="dash-card__label">Totales</p>
-        <a class="btn btn--primary btn--block" href="{% url 'orden_lista' %}">Gestionar</a>
+        <p class="dash-card__label">{% if rol_cajero and not rol_admin and not rol_mesero %}Pendientes{% else %}Totales{% endif %}</p>
+        <a class="btn btn--primary btn--block" href="{% url 'orden_lista' %}">{% if rol_cajero and not rol_admin and not rol_mesero %}Ver pendientes{% else %}Gestionar{% endif %}</a>
     </article>
+    {% endif %}
 
+    {% if dash_facturas %}
     <article class="dash-card">
         <h2 class="dash-card__title">Facturas</h2>
         <p class="dash-card__value">{{ total_facturas }}</p>
-        <p class="dash-card__label">Emitidas</p>
-        <a class="btn btn--primary btn--block" href="{% url 'factura_lista' %}">Gestionar</a>
+        <p class="dash-card__label">Historial de ventas</p>
+        <a class="btn btn--primary btn--block" href="{% url 'factura_lista' %}">Consultar</a>
     </article>
+    {% endif %}
 </div>
 {% endblock %}

@@ -5,6 +5,7 @@ from . import views
 
 urlpatterns = [
     path('', views.inicio, name='inicio'),
+    path('sin-permiso/', views.sin_permiso, name='sin_permiso'),
     # Cliente
     path('clientes/crear/', views.cliente_crear, name='cliente_crear'),
     path('clientes/<int:pk>/editar/', views.cliente_editar, name='cliente_editar'),
@@ -26,6 +27,7 @@ urlpatterns = [
     path('platos/<int:pk>/eliminar/', views.plato_eliminar, name='plato_eliminar'),
     path('platos/', views.plato_lista, name='plato_lista'),
     # Orden
+    path('api/orden/<int:pk>/resumen/', views.orden_resumen, name='orden_resumen'),
     path('ordenes/crear/', views.orden_crear, name='orden_crear'),
     path('ordenes/<int:pk>/editar/', views.orden_editar, name='orden_editar'),
     path('ordenes/<int:pk>/eliminar/', views.orden_eliminar, name='orden_eliminar'),
@@ -35,4 +37,9 @@ urlpatterns = [
     path('facturas/<int:pk>/editar/', views.factura_editar, name='factura_editar'),
     path('facturas/<int:pk>/eliminar/', views.factura_eliminar, name='factura_eliminar'),
     path('facturas/', views.factura_lista, name='factura_lista'),
+    # Usuario
+    path('usuarios/crear/', views.usuario_crear, name='usuario_crear'),
+    path('usuarios/<int:pk>/editar/', views.usuario_editar, name='usuario_editar'),
+    path('usuarios/<int:pk>/eliminar/', views.usuario_eliminar, name='usuario_eliminar'),
+    path('usuarios/', views.usuario_lista, name='usuario_lista'),
 ]

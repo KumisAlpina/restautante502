@@ -2,29 +2,101 @@
 
 {% block content %}
 <h1 class="page-title">{{ titulo }}</h1>
-<form method="post" novalidate>
+<form method="post" novalidate class="form-factura" id="form-factura">
     {% csrf_token %}
     {% if form.non_field_errors %}
         <ul class="errores">
             {% for err in form.non_field_errors %}<li>{{ err }}</li>{% endfor %}
         </ul>
     {% endif %}
-    <table class="form-table">
-        {% for field in form %}
-        <tr>
-            <th>{{ field.label_tag }}</th>
-            <td>
-                {{ field }}
-                {% if field.errors %}
-                    <ul class="errores">{% for err in field.errors %}<li>{{ err }}</li>{% endfor %}</ul>
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
+
+    <section class="form-section">
+        <h2 class="form-section__title">Orden y pago</h2>
+        <table class="form-table">
+            {% for field in form %}
+            <tr>
+                <th>{{ field.label_tag }}</th>
+                <td>
+                    {{ field }}
+                    {% if field.name == 'subtotal' %}
+                        <p class="help">Tomado del total de platos de la orden.</p>
+                    {% endif %}
+                    {% if field.errors %}
+                        <ul class="errores">{% for err in field.errors %}<li>{{ err }}</li>{% endfor %}</ul>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </section>
+
+    <section class="form-section" id="detalle-orden-section">
+        <h2 class="form-section__title">Detalle de platos (orden)</h2>
+        <div id="detalle-orden-contenido">
+            {% if orden_preview %}
+            {% include 'gestion/partials/orden_detalle_tabla.html' with orden=orden_preview %}
+            {% else %}
+            <p class="help">Seleccione una orden para ver los platos facturados.</p>
+            {% endif %}
+        </div>
+    </section>
+
     <div class="form-actions">
-        <button type="submit" class="btn btn--primary">Guardar</button>
+        <button type="submit" class="btn btn--primary">Guardar factura</button>
         <a class="btn btn--outline" href="{% url 'factura_lista' %}">Cancelar</a>
     </div>
 </form>
+
+<script>
+(function () {
+    const selectOrden = document.getElementById('id_orden');
+    const contenedor = document.getElementById('detalle-orden-contenido');
+    const subtotalInput = document.getElementById('id_subtotal');
+    const impuestoInput = document.getElementById('id_impuesto');
+    const totalInput = document.getElementById('id_total_factura');
+    const ivaRate = {{ iva_rate }};
+
+    if (!selectOrden || !contenedor) return;
+
+    function renderTabla(data) {
+        if (!data.detalles.length) {
+            contenedor.innerHTML = '<p class="help">La orden no tiene platos registrados.</p>';
+            return;
+        }
+        let rows = data.detalles.map(d =>
+            `<tr><td>${d.plato}</td><td>${d.cantidad}</td><td>Q${d.precio_unitario}</td><td>Q${d.subtotal}</td></tr>`
+        ).join('');
+        contenedor.innerHTML = `
+            <p class="help">Mesa ${data.mesa} · Cliente: ${data.cliente}</p>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead><tr><th>Plato</th><th>Cant.</th><th>P. unit.</th><th>Subtotal</th></tr></thead>
+                    <tbody>${rows}</tbody>
+                    <tfoot><tr><th colspan="3">Subtotal orden</th><th>Q${data.subtotal}</th></tr></tfoot>
+                </table>
+            </div>`;
+    }
+
+    function actualizarMontos(data) {
+        if (subtotalInput) subtotalInput.value = data.subtotal;
+        if (impuestoInput) impuestoInput.value = data.impuesto;
+        if (totalInput) totalInput.value = data.total;
+    }
+
+    async function cargarOrden(pk) {
+        if (!pk) {
+            contenedor.innerHTML = '<p class="help">Seleccione una orden para ver los platos facturados.</p>';
+            return;
+        }
+        const resp = await fetch(`/api/orden/${pk}/resumen/`);
+        if (!resp.ok) return;
+        const data = await resp.json();
+        renderTabla(data);
+        actualizarMontos(data);
+    }
+
+    selectOrden.addEventListener('change', () => cargarOrden(selectOrden.value));
+    if (selectOrden.value) cargarOrden(selectOrden.value);
+})();
+</script>
 {% endblock %}

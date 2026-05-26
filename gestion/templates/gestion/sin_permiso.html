@@ -1,0 +1,7 @@
+{% extends 'gestion/base.html' %}
+
+{% block content %}
+<h1 class="page-title">Sin permiso</h1>
+<p class="confirm-text">No tienes permisos para acceder a esta sección.</p>
+<a class="btn btn--primary" href="{% url 'inicio' %}">Volver al inicio</a>
+{% endblock %}

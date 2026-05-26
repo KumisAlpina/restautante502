@@ -1,5 +1,5 @@
 {# gestion/templates/gestion/base.html #}
-{% load static %}
+{% load static gestion_extras %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -18,19 +18,45 @@
         {% if request.user.is_authenticated %}
         <span class="site-nav__meta">{{ request.user.username }} · <a href="{% url 'logout' %}">Cerrar sesión</a></span>
         {% endif %}
+        {% if nav_inicio %}
         <a href="{% url 'inicio' %}" class="nav-link{% if u == 'inicio' %} nav-link--active{% endif %}">Inicio</a>
+        {% endif %}
+        {% if nav_clientes %}
         <a href="{% url 'cliente_lista' %}" class="nav-link{% if u and 'cliente' in u %} nav-link--active{% endif %}">Clientes</a>
+        {% endif %}
+        {% if nav_empleados %}
         <a href="{% url 'empleado_lista' %}" class="nav-link{% if u and 'empleado' in u %} nav-link--active{% endif %}">Empleados</a>
+        {% endif %}
+        {% if nav_mesas %}
         <a href="{% url 'mesa_lista' %}" class="nav-link{% if u and 'mesa' in u and 'empleado' not in u %} nav-link--active{% endif %}">Mesas</a>
-        <a href="{% url 'plato_lista' %}" class="nav-link{% if u and 'plato' in u %} nav-link--active{% endif %}">Platos</a>
+        {% endif %}
+        {% if nav_platos %}
+        <a href="{% url 'plato_lista' %}" class="nav-link{% if u and 'plato' in u %} nav-link--active{% endif %}">{% if rol_mesero and not rol_admin %}Menú{% else %}Platos{% endif %}</a>
+        {% endif %}
+        {% if nav_ordenes %}
         <a href="{% url 'orden_lista' %}" class="nav-link{% if u and 'orden' in u %} nav-link--active{% endif %}">Órdenes</a>
+        {% endif %}
+        {% if nav_facturas %}
         <a href="{% url 'factura_lista' %}" class="nav-link{% if u and 'factura' in u %} nav-link--active{% endif %}">Facturas</a>
+        {% endif %}
+        {% if nav_usuarios %}
+        <a href="{% url 'usuario_lista' %}" class="nav-link{% if u and 'usuario' in u %} nav-link--active{% endif %}">Usuarios</a>
+        {% endif %}
+        {% if nav_admin_site %}
         <a href="/admin/" class="nav-link{% if request.path|slice:':7' == '/admin/' %} nav-link--active{% endif %}">Admin</a>
+        {% endif %}
     </nav>
     {% endwith %}
 
     <main class="site-main">
         <div class="contenedor">
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li class="message message--{{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
             {% block content %}
             {% endblock %}
         </div>

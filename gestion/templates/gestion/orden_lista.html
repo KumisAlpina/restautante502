@@ -1,10 +1,12 @@
 {% extends 'gestion/base.html' %}
 
 {% block content %}
-<h1 class="page-title">Órdenes</h1>
+<h1 class="page-title">{{ titulo|default:"Órdenes" }}</h1>
+{% if puede_crear_orden %}
 <div class="page-toolbar">
     <a class="btn btn--primary" href="{% url 'orden_crear' %}">+ Crear orden</a>
 </div>
+{% endif %}
 <div class="table-wrapper">
     <table class="data-table">
         <thead>
@@ -13,10 +15,11 @@
                 <th>Cliente</th>
                 <th>Empleado</th>
                 <th>Mesa</th>
+                <th>Platos</th>
                 <th>Fecha</th>
                 <th>Estado</th>
                 <th>Total</th>
-                <th>Acciones</th>
+                {% if puede_editar_orden or puede_eliminar_orden or puede_crear_factura %}<th>Acciones</th>{% endif %}
             </tr>
         </thead>
         <tbody>
@@ -26,17 +29,27 @@
                 <td>{{ orden.cliente.nombre }}</td>
                 <td>{{ orden.empleado.nombre }}</td>
                 <td>{{ orden.mesa.numero_mesa }}</td>
+                <td class="cell-platos">{{ orden.resumen_platos }}</td>
                 <td>{{ orden.fecha_hora }}</td>
                 <td>{{ orden.estado_orden }}</td>
-                <td>{{ orden.total }}</td>
+                <td>${{ orden.total }}</td>
+                {% if puede_editar_orden or puede_eliminar_orden or puede_crear_factura %}
                 <td class="data-table__actions">
+                    {% if puede_editar_orden %}
                     <a class="btn btn--outline btn--sm" href="{% url 'orden_editar' orden.pk %}">Editar</a>
+                    {% endif %}
+                    {% if puede_eliminar_orden %}
                     <a class="btn btn--outline btn--sm" href="{% url 'orden_eliminar' orden.pk %}">Eliminar</a>
+                    {% endif %}
+                    {% if puede_crear_factura and not orden.tiene_factura %}
+                    <a class="btn btn--primary btn--sm" href="{% url 'factura_crear' %}?orden={{ orden.pk }}">Facturar</a>
+                    {% endif %}
                 </td>
+                {% endif %}
             </tr>
             {% empty %}
             <tr>
-                <td colspan="8">No hay órdenes registradas.</td>
+                <td colspan="{% if puede_editar_orden or puede_eliminar_orden or puede_crear_factura %}9{% else %}8{% endif %}">No hay órdenes registradas.</td>
             </tr>
             {% endfor %}
         </tbody>

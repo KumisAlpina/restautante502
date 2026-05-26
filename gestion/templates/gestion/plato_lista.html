@@ -1,10 +1,12 @@
 {% extends 'gestion/base.html' %}
 
 {% block content %}
-<h1 class="page-title">Platos</h1>
+<h1 class="page-title">{{ titulo|default:"Platos" }}</h1>
+{% if puede_crear_plato %}
 <div class="page-toolbar">
     <a class="btn btn--primary" href="{% url 'plato_crear' %}">+ Crear plato</a>
 </div>
+{% endif %}
 <div class="table-wrapper">
     <table class="data-table">
         <thead>
@@ -15,7 +17,7 @@
                 <th>Precio</th>
                 <th>Categoría</th>
                 <th>Disponible</th>
-                <th>Acciones</th>
+                {% if puede_editar_plato or puede_eliminar_plato %}<th>Acciones</th>{% endif %}
             </tr>
         </thead>
         <tbody>
@@ -27,14 +29,20 @@
                 <td>{{ plato.precio }}</td>
                 <td>{{ plato.categoria|default:"—" }}</td>
                 <td>{% if plato.disponible %}Sí{% else %}No{% endif %}</td>
+                {% if puede_editar_plato or puede_eliminar_plato %}
                 <td class="data-table__actions">
+                    {% if puede_editar_plato %}
                     <a class="btn btn--outline btn--sm" href="{% url 'plato_editar' plato.pk %}">Editar</a>
+                    {% endif %}
+                    {% if puede_eliminar_plato %}
                     <a class="btn btn--outline btn--sm" href="{% url 'plato_eliminar' plato.pk %}">Eliminar</a>
+                    {% endif %}
                 </td>
+                {% endif %}
             </tr>
             {% empty %}
             <tr>
-                <td colspan="7">No hay platos registrados.</td>
+                <td colspan="{% if puede_editar_plato or puede_eliminar_plato %}7{% else %}6{% endif %}">No hay platos registrados.</td>
             </tr>
             {% endfor %}
         </tbody>

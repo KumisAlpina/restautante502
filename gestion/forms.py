@@ -1,6 +1,12 @@
-from django import forms
+from decimal import Decimal
 
-from .models import Cliente, Empleado, Mesa, Plato, Orden, Factura
+from django import forms
+from django.contrib.auth.models import Group, User
+from django.forms import inlineformset_factory
+
+from .models import Cliente, DetalleOrden, Empleado, Factura, Mesa, Orden, Plato
+
+IVA_RATE = Decimal('0.12')
 
 
 class ClienteForm(forms.ModelForm):
@@ -65,18 +71,62 @@ class PlatoForm(forms.ModelForm):
 class OrdenForm(forms.ModelForm):
     class Meta:
         model = Orden
-        fields = ['cliente', 'empleado', 'mesa', 'estado_orden', 'total']
+        fields = ['cliente', 'empleado', 'mesa', 'estado_orden']
         labels = {
             'cliente': 'Cliente',
             'empleado': 'Empleado',
             'mesa': 'Mesa',
             'estado_orden': 'Estado',
-            'total': 'Total',
         }
         widgets = {
             'estado_orden': forms.Select(),
-            'total': forms.NumberInput(attrs={'step': '0.01'}),
         }
+
+
+class DetalleOrdenForm(forms.ModelForm):
+    class Meta:
+        model = DetalleOrden
+        fields = ['plato', 'cantidad']
+        labels = {
+            'plato': 'Plato',
+            'cantidad': 'Cantidad',
+        }
+        widgets = {
+            'cantidad': forms.NumberInput(attrs={'min': 1, 'class': 'input-cantidad'}),
+            'plato': forms.Select(attrs={'class': 'select-plato'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['plato'].queryset = Plato.objects.filter(disponible=True).order_by('nombre_plato')
+        self.fields['plato'].label_from_instance = (
+            lambda obj: f'{obj.nombre_plato} — Q{obj.precio}'
+        )
+
+
+class BaseDetalleOrdenFormSet(forms.BaseInlineFormSet):
+    def clean(self):
+        super().clean()
+        if any(self.errors):
+            return
+        lineas = [
+            form for form in self.forms
+            if form.cleaned_data and not form.cleaned_data.get('DELETE', False)
+        ]
+        if not lineas:
+            raise forms.ValidationError('Agregue al menos un plato a la orden.')
+
+
+DetalleOrdenFormSet = inlineformset_factory(
+    Orden,
+    DetalleOrden,
+    form=DetalleOrdenForm,
+    formset=BaseDetalleOrdenFormSet,
+    extra=2,
+    can_delete=True,
+    min_num=1,
+    validate_min=True,
+)
 
 
 class FacturaForm(forms.ModelForm):
@@ -104,4 +154,116 @@ class FacturaForm(forms.ModelForm):
             ocupados = qs.exclude(pk=self.instance.pk).values_list('orden_id', flat=True)
         else:
             ocupados = qs.values_list('orden_id', flat=True)
-        self.fields['orden'].queryset = Orden.objects.exclude(id__in=ocupados)
+        self.fields['orden'].queryset = (
+            Orden.objects.exclude(id__in=ocupados)
+            .exclude(estado_orden='Cancelada')
+            .exclude(estado_orden='Facturada')
+            .prefetch_related('detalles__plato')
+        )
+        self.fields['orden'].label_from_instance = (
+            lambda obj: f'Orden #{obj.id} — Mesa {obj.mesa.numero_mesa} — Q{obj.total}'
+        )
+        self._aplicar_totales_desde_orden()
+
+    def _orden_seleccionada(self):
+        if self.data.get('orden'):
+            return Orden.objects.filter(pk=self.data.get('orden')).prefetch_related('detalles__plato').first()
+        if self.initial.get('orden'):
+            pk = self.initial['orden']
+            if hasattr(pk, 'pk'):
+                pk = pk.pk
+            return Orden.objects.filter(pk=pk).prefetch_related('detalles__plato').first()
+        if self.instance.pk and self.instance.orden_id:
+            return self.instance.orden
+        return None
+
+    def _aplicar_totales_desde_orden(self):
+        orden = self._orden_seleccionada()
+        if not orden:
+            return
+        subtotal = orden.total or Decimal('0.00')
+        impuesto = (subtotal * IVA_RATE).quantize(Decimal('0.01'))
+        total = subtotal + impuesto
+        self.fields['subtotal'].initial = subtotal
+        if not self.instance.pk:
+            self.fields['impuesto'].initial = impuesto
+            self.fields['total_factura'].initial = total
+        self.fields['subtotal'].widget.attrs['readonly'] = True
+
+    def clean(self):
+        cleaned = super().clean()
+        orden = cleaned.get('orden')
+        if orden:
+            if not orden.detalles.exists():
+                self.add_error('orden', 'La orden no tiene platos registrados.')
+            elif (orden.total or Decimal('0')) <= 0:
+                self.add_error('orden', 'El total de la orden debe ser mayor a cero.')
+            subtotal = orden.total or Decimal('0.00')
+            cleaned['subtotal'] = subtotal
+            impuesto = cleaned.get('impuesto')
+            if impuesto is None:
+                impuesto = (subtotal * IVA_RATE).quantize(Decimal('0.01'))
+                cleaned['impuesto'] = impuesto
+            total = cleaned.get('total_factura')
+            if total is None:
+                cleaned['total_factura'] = subtotal + impuesto
+        return cleaned
+
+    def save(self, commit=True):
+        factura = super().save(commit=commit)
+        if commit:
+            orden = factura.orden
+            orden.estado_orden = 'Facturada'
+            orden.save(update_fields=['estado_orden'])
+            mesa = orden.mesa
+            mesa.estado_mesa = 'Disponible'
+            mesa.save(update_fields=['estado_mesa'])
+        return factura
+
+
+SYSTEM_ROLES = ('Administrador', 'Mesero', 'Cajero')
+
+
+class UsuarioForm(forms.ModelForm):
+    password = forms.CharField(
+        required=False,
+        label='Contraseña',
+        widget=forms.PasswordInput(render_value=False),
+        help_text='Déjalo vacío para mantener la contraseña actual.',
+    )
+    grupo = forms.ModelChoiceField(
+        queryset=Group.objects.filter(name__in=SYSTEM_ROLES),
+        required=True,
+        empty_label=None,
+        label='Grupo',
+    )
+
+    class Meta:
+        model = User
+        fields = ['username', 'email']
+        labels = {
+            'username': 'Usuario',
+            'email': 'Correo',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.pk:
+            self.fields['password'].required = False
+            current = self.instance.groups.filter(name__in=SYSTEM_ROLES).first()
+            if current:
+                self.fields['grupo'].initial = current
+        else:
+            self.fields['password'].required = True
+            self.fields['password'].help_text = 'Contraseña obligatoria al crear el usuario.'
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        raw_password = self.cleaned_data.get('password') or ''
+        if raw_password:
+            user.set_password(raw_password)
+        if commit:
+            user.save()
+            group = self.cleaned_data['grupo']
+            user.groups.set([group])
+        return user

@@ -89,6 +89,21 @@ class Orden(models.Model):
     def __str__(self):
         return f"Orden {self.id} - {self.cliente.nombre}"
 
+    def recalcular_total(self):
+        total = sum((detalle.subtotal or Decimal('0.00')) for detalle in self.detalles.all())
+        self.total = total
+        self.save(update_fields=['total'])
+
+    def resumen_platos(self, max_items=3):
+        detalles = list(self.detalles.select_related('plato').all()[:max_items])
+        if not detalles:
+            return 'Sin platos'
+        partes = [f'{d.plato.nombre_plato} x{d.cantidad}' for d in detalles]
+        restantes = self.detalles.count() - len(partes)
+        if restantes > 0:
+            partes.append(f'+{restantes} más')
+        return ', '.join(partes)
+
 
 class DetalleOrden(models.Model):
     orden = models.ForeignKey(Orden, on_delete=models.CASCADE, related_name='detalles')
@@ -104,13 +119,15 @@ class DetalleOrden(models.Model):
         self.precio_unitario = self.plato.precio
         self.subtotal = Decimal(self.cantidad) * self.precio_unitario
         super().save(*args, **kwargs)
+        self.orden.recalcular_total()
 
-        total_orden = sum((detalle.subtotal or Decimal('0.00')) for detalle in self.orden.detalles.all())
-        self.orden.total = total_orden
-        self.orden.save()
+    def delete(self, *args, **kwargs):
+        orden = self.orden
+        super().delete(*args, **kwargs)
+        orden.recalcular_total()
 
     def __str__(self):
-        return f"Detalle {self.id} - Orden {self.orden.id}"
+        return f"{self.plato.nombre_plato} x{self.cantidad}"
 
 
 class Factura(models.Model):

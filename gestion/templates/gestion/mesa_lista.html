@@ -2,9 +2,11 @@
 
 {% block content %}
 <h1 class="page-title">Mesas</h1>
+{% if puede_crear_mesa %}
 <div class="page-toolbar">
     <a class="btn btn--primary" href="{% url 'mesa_crear' %}">+ Crear mesa</a>
 </div>
+{% endif %}
 <div class="table-wrapper">
     <table class="data-table">
         <thead>
@@ -13,7 +15,7 @@
                 <th>Número</th>
                 <th>Capacidad</th>
                 <th>Estado</th>
-                <th>Acciones</th>
+                {% if puede_editar_mesa or puede_eliminar_mesa %}<th>Acciones</th>{% endif %}
             </tr>
         </thead>
         <tbody>
@@ -23,14 +25,20 @@
                 <td>{{ mesa.numero_mesa }}</td>
                 <td>{{ mesa.capacidad }}</td>
                 <td>{{ mesa.estado_mesa }}</td>
+                {% if puede_editar_mesa or puede_eliminar_mesa %}
                 <td class="data-table__actions">
+                    {% if puede_editar_mesa %}
                     <a class="btn btn--outline btn--sm" href="{% url 'mesa_editar' mesa.pk %}">Editar</a>
+                    {% endif %}
+                    {% if puede_eliminar_mesa %}
                     <a class="btn btn--outline btn--sm" href="{% url 'mesa_eliminar' mesa.pk %}">Eliminar</a>
+                    {% endif %}
                 </td>
+                {% endif %}
             </tr>
             {% empty %}
             <tr>
-                <td colspan="5">No hay mesas registradas.</td>
+                <td colspan="{% if puede_editar_mesa or puede_eliminar_mesa %}5{% else %}4{% endif %}">No hay mesas registradas.</td>
             </tr>
             {% endfor %}
         </tbody>
